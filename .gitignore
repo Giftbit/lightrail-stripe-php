@@ -4,8 +4,9 @@
 # User-specific stuff:
 .idea/
 *.iml
-target/
-deploy.sh
+target/*
+/phpunit-6.2.phar
+/deploy.sh
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -18,4 +19,5 @@ deploy.sh
 
 # IntelliJ
 /out/
+
 
