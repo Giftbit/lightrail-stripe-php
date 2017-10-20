@@ -4,10 +4,21 @@ namespace Lightrail;
 
 class LightrailTransaction extends LightrailObject {
 	private static $CREATE_ENDPOINT = "cards/%s/transactions";
+
 	private static $DRYRUN_ENDPOINT = "cards/%s/transactions/dryRun";
+
+	private static $CAPTURE_ENDPOINT = "cards/%s/transactions/%s/capture";
+	private static $VOID_ENDPOINT = "cards/%s/transactions/%s/void";
+	private static $REFUND_ENDPOINT = "cards/%s/transactions/%s/refund";
 
 	public static function simulate( $params ) {
 		return self::create( $params, true );
+	}
+
+	public static function createPending( $params ) {
+		$params['pending'] = true;
+
+		return self::create( $params, false );
 	}
 
 	public static function create( $params, $simulate = false ) {
@@ -28,8 +39,8 @@ class LightrailTransaction extends LightrailObject {
 		unset( $params['cardId'] );
 
 		$endpoint = sprintf( $endpoint, $cardId );
-		var_dump($params);
 		$response = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
+
 		return new LightrailTransaction( $response, 'transaction' );
 	}
 
@@ -39,7 +50,7 @@ class LightrailTransaction extends LightrailObject {
 		if ( ! isset( $new_params['currency'] ) ) {
 			throw new BadParameterException( 'Must provide \'currency\'' );
 		}
-		$currency   = $new_params['currency'];
+		$currency = $new_params['currency'];
 
 		if ( isset( $new_params['shopperId'] ) ) {
 			$shopperId = $new_params['shopperId'];
@@ -54,6 +65,39 @@ class LightrailTransaction extends LightrailObject {
 		}
 
 		return $new_params;
+	}
+
+	public function capture( $params = array() ) {
+		return $this->finalizeTransaction( 'CAPTURE', $params );
+	}
+
+	public function void( $params = array() ) {
+		return $this->finalizeTransaction( 'VOID', $params );
+	}
+
+	public function refund( $params = array() ) {
+		return $this->finalizeTransaction( 'REFUND', $params );
+	}
+
+	private function finalizeTransaction( $action, $params ) {
+
+		if ( $this->transactionId == null) {
+			throw new BadParameterException( 'Cannot call ' . $action . ' on a simulated transaction.' );
+		}
+		if ( 'CAPTURE' == $action ) {
+			$endpoint = Lightrail::$API_BASE . self::$CAPTURE_ENDPOINT;
+		} else if ( 'VOID' == $action ) {
+			$endpoint = Lightrail::$API_BASE . self::$VOID_ENDPOINT;
+		} else if ( 'REFUND' == $action ) {
+			$endpoint = Lightrail::$API_BASE . self::$REFUND_ENDPOINT;
+		} else {
+			throw new BadParameterException( 'Undefined action: ' . $action);
+		}
+		$endpoint = sprintf( $endpoint, $this->cardId, $this->transactionId );
+		$params   = self::addDefaultUserSuppliedIdIfNotProvided( $params );
+		$response = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
+
+		return new LightrailTransaction( $response , 'transaction');
 	}
 
 	private static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
