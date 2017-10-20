@@ -1,15 +1,19 @@
 <?php
 
 namespace Lightrail;
+require_once '../test-config.php';
+require_once '../init.php';
 
 use PHPUnit\Framework\TestCase;
-require '../lib/Lightrail.php';
+
 
 
 class LightrailTest extends TestCase {
 
 	public function testPing()
 	{
-		Lightrail::ping();
+		Lightrail::$apiKey= TestConfig::$apiKey;
+		$response = LightrailAPICall::ping();
+		$this->assertEquals('TEST', $response['user']['mode']);
 	}
 }

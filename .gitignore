@@ -4,9 +4,11 @@
 # User-specific stuff:
 .idea/
 *.iml
+/vendor
 target/*
 /phpunit-6.2.phar
 /deploy.sh
+/test-config.php
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
