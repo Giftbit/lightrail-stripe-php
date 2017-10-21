@@ -4,7 +4,7 @@ namespace Lightrail;
 
 require_once '../test-config.php';
 require_once '../init.php';
-require_once '../vendor/stripe/stripe-php/init.php';
+require_once '../vendor/autoload.php';
 
 
 use PHPUnit\Framework\TestCase;

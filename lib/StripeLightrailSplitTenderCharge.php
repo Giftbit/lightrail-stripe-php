@@ -4,8 +4,6 @@
 namespace Lightrail;
 
 
-use PHPUnit\Runner\Exception;
-
 class StripeLightrailSplitTenderCharge {
 
 	public $lightrailTransaction = null;
