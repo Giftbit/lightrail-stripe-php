@@ -6,3 +6,5 @@ require_once (dirname(__FILE__) . '/lib/LightrailObject.php');
 require_once (dirname(__FILE__) . '/lib/LightrailCard.php');
 require_once (dirname(__FILE__) . '/lib/LightrailContact.php');
 require_once (dirname(__FILE__) . '/lib/LightrailTransaction.php');
+require_once (dirname(__FILE__) . '/lib/StripeLightrailSplitTenderCharge.php');
+require_once (dirname(__FILE__) . '/lib/LightrailClientTokenFactory.php');

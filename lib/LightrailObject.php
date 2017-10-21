@@ -39,6 +39,10 @@ class LightrailObject {
 		return $this->properties[ $name ];
 	}
 
+	public function getRawJson() {
+		return json_encode($this->properties);
+	}
+
 //	private function create_property_if_not_exists($name) {
 //		if (array_key_exists($name, $this->properties)) return;
 //		$this->create_property($name, array());

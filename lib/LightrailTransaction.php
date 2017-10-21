@@ -22,6 +22,7 @@ class LightrailTransaction extends LightrailObject {
 	}
 
 	public static function create( $params, $simulate = false ) {
+		Lightrail::checkParams($params);
 		if ( $simulate ) {
 			$endpoint = Lightrail::$API_BASE . self::$DRYRUN_ENDPOINT;
 		} else {
@@ -31,6 +32,8 @@ class LightrailTransaction extends LightrailObject {
 		$params = self::handleContact( $params );
 		$params = self::addDefaultUserSuppliedIdIfNotProvided( $params );
 		$params = self::addDefaultNSFIfNotProvided( $params );
+		$params = self::translateParametersFromStripe( $params );
+
 
 		if ( ! isset( $params['cardId'] ) ) {
 			throw new BadParameterException( 'Must provide one of \'cardId\', \'contact\', or \'shopperId\'' );
@@ -81,7 +84,7 @@ class LightrailTransaction extends LightrailObject {
 
 	private function finalizeTransaction( $action, $params ) {
 
-		if ( $this->transactionId == null) {
+		if ( $this->transactionId == null ) {
 			throw new BadParameterException( 'Cannot call ' . $action . ' on a simulated transaction.' );
 		}
 		if ( 'CAPTURE' == $action ) {
@@ -91,16 +94,16 @@ class LightrailTransaction extends LightrailObject {
 		} else if ( 'REFUND' == $action ) {
 			$endpoint = Lightrail::$API_BASE . self::$REFUND_ENDPOINT;
 		} else {
-			throw new BadParameterException( 'Undefined action: ' . $action);
+			throw new BadParameterException( 'Undefined action: ' . $action );
 		}
 		$endpoint = sprintf( $endpoint, $this->cardId, $this->transactionId );
 		$params   = self::addDefaultUserSuppliedIdIfNotProvided( $params );
 		$response = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
 
-		return new LightrailTransaction( $response , 'transaction');
+		return new LightrailTransaction( $response, 'transaction' );
 	}
 
-	private static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
+	public static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
 		$new_params = $params;
 		if ( ! isset( $new_params['userSuppliedId'] ) ) {
 			$new_params['userSuppliedId'] = uniqid();
@@ -113,6 +116,16 @@ class LightrailTransaction extends LightrailObject {
 		$new_params = $params;
 		if ( ! isset( $new_params['nsf'] ) ) {
 			$new_params['nsf'] = false;
+		}
+
+		return $new_params;
+	}
+
+	private static function translateParametersFromStripe( $params ) {
+		$new_params = $params;
+		if ( isset( $new_params['amount'] ) ) {
+			$new_params['value'] = 0 - $new_params['amount'];
+			unset($new_params['amount']);
 		}
 
 		return $new_params;
