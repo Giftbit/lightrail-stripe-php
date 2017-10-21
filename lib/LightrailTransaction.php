@@ -100,7 +100,7 @@ class LightrailTransaction extends LightrailObject {
 		return new LightrailTransaction( $response , 'transaction');
 	}
 
-	private static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
+	public static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
 		$new_params = $params;
 		if ( ! isset( $new_params['userSuppliedId'] ) ) {
 			$new_params['userSuppliedId'] = uniqid();
