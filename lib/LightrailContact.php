@@ -25,8 +25,7 @@ class LightrailContact extends LightrailObject {
 		return new LightrailContact($response);
 	}
 
-	public function
-	retrieveContactCardForCurrency ($currency) {
+	public function retrieveContactCardForCurrency ($currency) {
 		$endpoint = sprintf( Lightrail::$API_BASE . self::$RETRIEVE_CONTACT_CARD_FOR_CURRENCY, $this->contactId, $currency);
 		$response = json_decode(LightrailAPICall::get($endpoint), true);
 		if (isset($response['cards'][0]))
