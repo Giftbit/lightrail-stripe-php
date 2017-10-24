@@ -6,3 +6,41 @@ If you are looking for specific use-cases or other languages, check out the *Int
 
 ## Features ##
 - Simple order checkout supporting split-tender transactions with Lightrail redemption alongside a Stripe payment.
+
+## Usage ##
+
+For a sample project using this library, check out the [Lightrail Stripe Sample PHP Web App](https://github.com/Giftbit/stripe-integration-sample-php-webapp).
+
+## Installation ##
+
+### Composer
+You can add this library as a dependency to your project using `composer`:
+```json
+"require": {
+    "lightrail/lightrail-stripe": "dev-master"
+  }
+```
+Alternatively, you can copy all the files and add `init.php` to your project:
+```php
+require_once 'lightrail-stripe/init.php';
+
+```
+## Requirements ## 
+This library requires `PHP 5.3.3` or later.
+
+## Dependencies ##
+
+The only dependencies of this library are `Stripe` and `firebase/php-jwt`. 
+```json
+"require": {
+    "stripe/stripe-php": "^5.3",
+    "firebase/php-jwt": "^5.0"
+  }
+```
+
+The following dependency is also necessary if you want to run the unit tests.
+```json
+"require-dev": {
+    "phpunit/phpunit": "^6.2"
+  }
+```
