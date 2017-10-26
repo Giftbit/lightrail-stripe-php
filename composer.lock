@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d12eef0944300ca966c63b912c772e3d",
+    "content-hash": "e4a1f33af34fba90167c2e7be2aabf8a",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,16 +54,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v5.3.0",
+            "version": "v5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "d102a355d8c2e1a00d68659e9b51fb6f63aaa957"
+                "reference": "befa5eb61a206da9a6a5076c12ee208180295712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/d102a355d8c2e1a00d68659e9b51fb6f63aaa957",
-                "reference": "d102a355d8c2e1a00d68659e9b51fb6f63aaa957",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/befa5eb61a206da9a6a5076c12ee208180295712",
+                "reference": "befa5eb61a206da9a6a5076c12ee208180295712",
                 "shasum": ""
             },
             "require": {
@@ -105,7 +105,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2017-10-11T16:41:44+00:00"
+            "time": "2017-10-25T00:08:33+00:00"
         }
     ],
     "packages-dev": [
@@ -773,12 +773,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "1ce64f90a27a563c9eeef8cf384aabfeddaf572a"
+                "reference": "5c34f3cf7ce5793782c047961a0a5d539596f4ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1ce64f90a27a563c9eeef8cf384aabfeddaf572a",
-                "reference": "1ce64f90a27a563c9eeef8cf384aabfeddaf572a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5c34f3cf7ce5793782c047961a0a5d539596f4ef",
+                "reference": "5c34f3cf7ce5793782c047961a0a5d539596f4ef",
                 "shasum": ""
             },
             "require": {
@@ -849,7 +849,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-10-23T05:05:42+00:00"
+            "time": "2017-10-25T10:02:28+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1566,7 +1566,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.3"
+        "php": ">=5.5"
     },
     "platform-dev": []
 }
