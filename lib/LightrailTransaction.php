@@ -22,7 +22,7 @@ class LightrailTransaction extends LightrailObject {
 	}
 
 	public static function create( $params, $simulate = false ) {
-		Lightrail::checkParams($params);
+		Lightrail::checkParams( $params );
 		if ( $simulate ) {
 			$endpoint = Lightrail::$API_BASE . self::$DRYRUN_ENDPOINT;
 		} else {
@@ -31,7 +31,9 @@ class LightrailTransaction extends LightrailObject {
 
 		$params = self::handleContact( $params );
 		$params = self::addDefaultUserSuppliedIdIfNotProvided( $params );
-		$params = self::addDefaultNSFIfNotProvided( $params );
+		if ( $simulate ) {
+			$params = self::addDefaultNSFIfNotProvided( $params );
+		}
 		$params = self::translateParametersFromStripe( $params );
 
 
@@ -97,7 +99,8 @@ class LightrailTransaction extends LightrailObject {
 			throw new BadParameterException( 'Undefined action: ' . $action );
 		}
 		$endpoint = sprintf( $endpoint, $this->cardId, $this->transactionId );
-		$params   = self::addDefaultUserSuppliedIdIfNotProvided( $params );
+
+		$params ['userSuppliedId']  = ($this->userSuppliedId).'-'.$action;
 		$response = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
 
 		return new LightrailTransaction( $response, 'transaction' );
@@ -125,7 +128,12 @@ class LightrailTransaction extends LightrailObject {
 		$new_params = $params;
 		if ( isset( $new_params['amount'] ) ) {
 			$new_params['value'] = 0 - $new_params['amount'];
-			unset($new_params['amount']);
+			unset( $new_params['amount'] );
+		}
+
+		if ( isset( $new_params['idempotency-key'] ) ) {
+			$new_params['userSuppliedId'] = $new_params['idempotency-key'];
+			unset( $new_params['userSuppliedId'] );
 		}
 
 		return $new_params;
