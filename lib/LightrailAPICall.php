@@ -18,7 +18,8 @@ class LightrailAPICall {
 	private static function handleError( $httpCode, $response ) {
 		var_dump( $response );
 		if ( isset( $response ) ) {
-			$message = json_decode( $response,true )['message'];
+			$message = json_decode( $response,true );
+			$message = $message['message'];
 		}
 		if (!isset($message)) {
 			$message = $httpCode.'';

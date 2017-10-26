@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class LightrailTransactionTest extends TestCase {
 	public function getBasicParams() {
 		return array(
-			'value'     => -1,
+			'value'     => - 1,
 			'currency'  => "USD",
 			'shopperId' => TestConfig::$shopperId,
 		);
@@ -43,8 +43,8 @@ class LightrailTransactionTest extends TestCase {
 	public function testTransactionByShopperIdWithUserSuppliedId() {
 		Lightrail::$apiKey = TestConfig::$apiKey;
 
-		$params      = $this->getBasicParams();
-		$params['userSuppliedId']=uniqid();
+		$params                   = $this->getBasicParams();
+		$params['userSuppliedId'] = uniqid();
 
 		$transaction = LightrailTransaction::create( $params );
 		$this->assertNotNull( $transaction->transactionId );
