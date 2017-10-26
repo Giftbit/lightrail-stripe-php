@@ -18,7 +18,7 @@
   "license": "MIT",
   "minimum-stability": "dev",
   "require": {
-    "php": ">=5.3.3",
+    "php": ">=5.5",
     "stripe/stripe-php": "^5.3",
     "firebase/php-jwt": "^5.0"
   },

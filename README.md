@@ -26,7 +26,7 @@ require_once 'lightrail-stripe/init.php';
 
 ```
 ## Requirements ## 
-This library requires `PHP 5.3.3` or later.
+This library requires `PHP 5.5` or later.
 
 ## Dependencies ##
 
