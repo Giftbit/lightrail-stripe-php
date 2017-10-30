@@ -5,7 +5,7 @@ namespace Lightrail;
 
 class LightrailClientTokenFactory {
 
-	public static function generate ($shopperId, $validityInMs) {
+	public static function generate ($shopperId, $validityInSeconds) {
 
 		if (!isset(Lightrail::$apiKey))
 			throw new BadParameterException("Lightrail.apiKey is not set.");
@@ -21,18 +21,20 @@ class LightrailClientTokenFactory {
 		);
 
 		$iat = time();
+
 		$token = array(
 			'shopperId' => $shopperId,
 			'iat' => $iat,
 			'g' => $gClaim
 		);
 
-		if (isset($validityInMs)) {
-			$exp = $iat + $validityInMs;
+		if (isset($validityInSeconds)) {
+			$exp = $iat + $validityInSeconds;
 			$token['exp']=$exp;
         }
 
 		$jwt = \Firebase\JWT\JWT::encode($token, Lightrail::$clientSecret, 'HS256');
 		return $jwt;
 	}
+
 }
