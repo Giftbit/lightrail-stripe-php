@@ -28,13 +28,13 @@ class LightrailTransaction extends LightrailObject {
 		} else {
 			$endpoint = Lightrail::$API_BASE . self::$CREATE_ENDPOINT;
 		}
+		$params = self::translateParametersFromStripe( $params );
 
 		$params = self::handleContact( $params );
 		$params = self::addDefaultUserSuppliedIdIfNotProvided( $params );
 		if ( $simulate ) {
 			$params = self::addDefaultNSFIfNotProvided( $params );
 		}
-		$params = self::translateParametersFromStripe( $params );
 
 
 		if ( ! isset( $params['cardId'] ) ) {
@@ -100,8 +100,8 @@ class LightrailTransaction extends LightrailObject {
 		}
 		$endpoint = sprintf( $endpoint, $this->cardId, $this->transactionId );
 
-		$params ['userSuppliedId']  = ($this->userSuppliedId).'-'.$action;
-		$response = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
+		$params ['userSuppliedId'] = ( $this->userSuppliedId ) . '-' . $action;
+		$response                  = json_decode( LightrailAPICall::post( $endpoint, $params ), true );
 
 		return new LightrailTransaction( $response, 'transaction' );
 	}
@@ -136,6 +136,7 @@ class LightrailTransaction extends LightrailObject {
 			unset( $new_params['userSuppliedId'] );
 		}
 
+		$new_params['currency'] = strtoupper($new_params['currency']);
 		return $new_params;
 	}
 }

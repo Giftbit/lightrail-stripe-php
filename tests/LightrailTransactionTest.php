@@ -24,6 +24,15 @@ class LightrailTransactionTest extends TestCase {
 		$this->assertEquals( null, $transaction->transactionId );
 	}
 
+	public function testSimulateByLowerCaseCurrency() {
+		Lightrail::$apiKey = TestConfig::$apiKey;
+		$params            = $this->getBasicParams();
+		$params['currency'] = 'usd';
+		$transaction       = LightrailTransaction::simulate( $params );
+		$this->assertEquals( 'DRAWDOWN', $transaction->transactionType );
+		$this->assertEquals( null, $transaction->transactionId );
+	}
+
 	public function testTransactionByShopperId() {
 		Lightrail::$apiKey = TestConfig::$apiKey;
 		$params            = $this->getBasicParams();

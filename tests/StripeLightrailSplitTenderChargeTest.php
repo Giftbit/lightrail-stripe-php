@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class StripeLightrailSplitTenderChargeTest extends TestCase {
 
-	public function getBasicParams () {
+	public function getBasicParams() {
 		return array(
 			'amount'    => 100,
 			'currency'  => 'USD',
@@ -24,7 +24,20 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 		Lightrail::$apiKey = TestConfig::$apiKey;
 		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
 
-		$splitTender = StripeLightrailSplitTenderCharge::create( $this->getBasicParams (), 99, 1 );
+		$splitTender = StripeLightrailSplitTenderCharge::create( $this->getBasicParams(), 99, 1 );
+		$this->assertNotNull( $splitTender->lightrailTransaction );
+		$this->assertNotNull( $splitTender->stripeCharge );
+		$this->assertEquals( 99, $splitTender->getStripeShare() );
+		$this->assertEquals( 1, $splitTender->getLightrailShare() );
+	}
+
+	public function testSplitTenderWithLowercaseCurrency() {
+		Lightrail::$apiKey = TestConfig::$apiKey;
+		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
+
+		$params             = $this->getBasicParams();
+		$params['currency'] = 'usd';
+		$splitTender        = StripeLightrailSplitTenderCharge::create( $params, 99, 1 );
 		$this->assertNotNull( $splitTender->lightrailTransaction );
 		$this->assertNotNull( $splitTender->stripeCharge );
 		$this->assertEquals( 99, $splitTender->getStripeShare() );
@@ -35,14 +48,14 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 		Lightrail::$apiKey = TestConfig::$apiKey;
 		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
 
-		$params = $this->getBasicParams ();
+		$params = $this->getBasicParams();
 
-		$userSuppliedId = uniqid();
+		$userSuppliedId           = uniqid();
 		$params['userSuppliedId'] = $userSuppliedId;
 
 		$splitTender = StripeLightrailSplitTenderCharge::create( $params, 99, 1 );
 		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertEquals( $userSuppliedId.'-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
+		$this->assertEquals( $userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
 		$this->assertNotNull( $splitTender->stripeCharge );
 		$this->assertEquals( 99, $splitTender->getStripeShare() );
 		$this->assertEquals( 1, $splitTender->getLightrailShare() );
@@ -52,14 +65,14 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 		Lightrail::$apiKey = TestConfig::$apiKey;
 		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
 
-		$params = $this->getBasicParams ();
+		$params = $this->getBasicParams();
 
-		$userSuppliedId = uniqid();
+		$userSuppliedId            = uniqid();
 		$params['idempotency-key'] = $userSuppliedId;
 
 		$splitTender = StripeLightrailSplitTenderCharge::create( $params, 99, 1 );
 		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertEquals( $userSuppliedId.'-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
+		$this->assertEquals( $userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
 		$this->assertNotNull( $splitTender->stripeCharge );
 		$this->assertEquals( 99, $splitTender->getStripeShare() );
 		$this->assertEquals( 1, $splitTender->getLightrailShare() );
