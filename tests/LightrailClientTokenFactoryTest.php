@@ -16,7 +16,7 @@ class LightrailClientTokenFactoryTest extends TestCase {
 
 		$token = LightrailClientTokenFactory::generate(TestConfig::$shopperId, 10000);
 		$decoded = (array)\Firebase\JWT\JWT::decode($token, TestConfig::$lightrailClientSecret, array('HS256'));
-		$this->assertEquals(TestConfig::$shopperId, $decoded['shopperId']);
+		$this->assertEquals(TestConfig::$shopperId, $decoded['shi']);
 	}
 
 }

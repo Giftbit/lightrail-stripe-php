@@ -23,7 +23,7 @@ class LightrailClientTokenFactory {
 		$iat = time();
 
 		$token = array(
-			'shopperId' => $shopperId,
+			'shi' => $shopperId,
 			'iat' => $iat,
 			'g' => $gClaim
 		);
