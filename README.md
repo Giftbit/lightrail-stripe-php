@@ -44,3 +44,9 @@ The following dependency is also necessary if you want to run the unit tests.
     "phpunit/phpunit": "^6.2"
   }
 ```
+
+## Tests ## 
+
+Copy `~test-config.php` to `test-config.php` and fill in the blank fields. 
+
+Tests can be run from `tests/` with `../vendor/bin/phpunit ./`
