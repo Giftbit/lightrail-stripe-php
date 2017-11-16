@@ -17,13 +17,13 @@ class LightrailClientTokenFactory {
 		$uid = $payload['g']['gui'];
 
 		$gClaim = array(
-			'gui' => $uid
+			'gui' => $uid,
+			'shi' => $shopperId
 		);
 
 		$iat = time();
 
 		$token = array(
-			'shi' => $shopperId,
 			'iat' => $iat,
 			'g' => $gClaim
 		);
