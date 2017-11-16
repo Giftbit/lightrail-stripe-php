@@ -9,7 +9,7 @@ class Lightrail
 
     static $API_BASE = 'https://api.lightrail.com/v1/';
 
-    public static function setClientSecret($theSharedSecret)
+    public static function setSharedSecret($theSharedSecret)
     {
         self::$sharedSecret = $theSharedSecret;
     }
