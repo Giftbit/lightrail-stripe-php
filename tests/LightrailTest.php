@@ -6,10 +6,7 @@ require_once '../init.php';
 
 use PHPUnit\Framework\TestCase;
 
-
-
 class LightrailTest extends TestCase {
-
 	public function testPing()
 	{
 		Lightrail::$apiKey= TestConfig::$apiKey;
