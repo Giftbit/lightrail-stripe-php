@@ -18,8 +18,8 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 		return array(
 			'amount'    => 100,
 			'currency'  => 'USD',
-			'source'    => getenv("STRIPE_DEMO_TOKEN"),
-			'shopperId' => getenv("SHOPPER_ID")
+			'source'    => getenv( "STRIPE_DEMO_TOKEN" ),
+			'shopperId' => getenv( "SHOPPER_ID" ),
 		);
 	}
 
