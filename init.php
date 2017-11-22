@@ -1,2 +1,2 @@
 <?php
-require_once( dirname( __FILE__ ) . '/lib/StripeLightrailSplitTenderCharge.php' );
+require_once( dirname( __FILE__ ) . '/lib/SplitTenderCharge.php' );

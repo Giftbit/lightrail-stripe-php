@@ -4,7 +4,7 @@
 namespace LightrailStripe;
 
 
-class StripeLightrailSplitTenderCharge {
+class SplitTenderCharge {
 
 	public $lightrailTransaction = null;
 	public $stripeCharge = null;
@@ -34,7 +34,7 @@ class StripeLightrailSplitTenderCharge {
 			if ( $stripeShare == 0 ) { //everything on lightrail
 				$lightrailTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
 
-				return new StripeLightrailSplitTenderCharge( null, $lightrailTransaction );
+				return new SplitTenderCharge( null, $lightrailTransaction );
 			} else { //split between card and credit card
 				$lightrailParams['pending']  = true;
 				$lightrailPendingTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
@@ -54,14 +54,14 @@ class StripeLightrailSplitTenderCharge {
 				//$lightrailParams['metadata'] = self::getMetadata( 'STRIPE', $transactionAmount , $charge->getId());
 				$lightrailCaptureTransaction = $lightrailPendingTransaction->capture();
 
-				return new StripeLightrailSplitTenderCharge( $charge, $lightrailCaptureTransaction );
+				return new SplitTenderCharge( $charge, $lightrailCaptureTransaction );
 			}
 		} else { //all on credit card
 			$stripeParams           = self::removeLightrailParams( $params );
 			$stripeParams['amount'] = $stripeShare;
 			$charge                 = \Stripe\Charge::create( $stripeParams );
 
-			return new StripeLightrailSplitTenderCharge( $charge, null );
+			return new SplitTenderCharge( $charge, null );
 		}
 	}
 
