@@ -2,10 +2,10 @@
 
 namespace Lightrail;
 
-require_once '../test-config.php';
 require_once '../init.php';
-require_once '../vendor/autoload.php';
 
+$dotenv = new \Dotenv\Dotenv(__DIR__ . "/..");
+$dotenv->load();
 
 use PHPUnit\Framework\TestCase;
 
@@ -15,14 +15,14 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 		return array(
 			'amount'    => 100,
 			'currency'  => 'USD',
-			'source'    => TestConfig::$stripeDemoToken,
-			'shopperId' => TestConfig::$shopperId
+			'source'    => getenv("STRIPE_DEMO_TOKEN"),
+			'shopperId' => getenv("SHOPPER_ID")
 		);
 	}
 
 	public function testSplitTender() {
-		Lightrail::$apiKey = TestConfig::$apiKey;
-		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
+		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
+		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
 
 		$splitTender = StripeLightrailSplitTenderCharge::create( $this->getBasicParams(), 99, 1 );
 		$this->assertNotNull( $splitTender->lightrailTransaction );
@@ -32,8 +32,8 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithLowercaseCurrency() {
-		Lightrail::$apiKey = TestConfig::$apiKey;
-		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
+		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
+		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
 
 		$params             = $this->getBasicParams();
 		$params['currency'] = 'usd';
@@ -45,8 +45,8 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithUserSuppliedId() {
-		Lightrail::$apiKey = TestConfig::$apiKey;
-		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
+		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
+		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
 
 		$params = $this->getBasicParams();
 
@@ -62,8 +62,8 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithIdempotencyKey() {
-		Lightrail::$apiKey = TestConfig::$apiKey;
-		\Stripe\Stripe::setApiKey( TestConfig::$stripeTestApiKey );
+		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
+		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
 
 		$params = $this->getBasicParams();
 
