@@ -58,7 +58,7 @@
             "dist": {
                 "type": "path",
                 "url": "../lightrail-client-php",
-                "reference": "d9b3074181a4391969da80e0a23af7a5da1eeaa2",
+                "reference": "b5d9cf07a2e89bb395c51f23f9ed0dda33f7dff1",
                 "shasum": null
             },
             "require": {
@@ -70,6 +70,11 @@
                 "vlucas/phpdotenv": "^2.5@dev"
             },
             "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lightrail\\": "lib/"
+                }
+            },
             "scripts": {
                 "test": [
                     "phpunit"

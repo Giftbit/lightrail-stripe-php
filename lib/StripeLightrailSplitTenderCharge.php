@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Lightrail;
+namespace LightrailStripe;
 
 
 class StripeLightrailSplitTenderCharge {
@@ -48,11 +48,11 @@ class StripeLightrailSplitTenderCharge {
 
 	public static function create( $params, $stripeShare, $lightrailShare ) {
 		if ( ! isset( $params['amount'] ) ) {
-			throw new BadParameterException( 'Must provide \'amount\'' );
+			throw new \Lightrail\BadParameterException( 'Must provide \'amount\'' );
 		}
 		$transactionAmount = $params['amount'];
 		if ( $transactionAmount != $stripeShare + $lightrailShare ) {
-			throw new BadParameterException( 'Transaction amount does not match the sum of the given Stripe and Lightrail shares.' );
+			throw new \Lightrail\BadParameterException( 'Transaction amount does not match the sum of the given Stripe and Lightrail shares.' );
 		}
 		unset( $params['amount'] );
 
@@ -64,12 +64,12 @@ class StripeLightrailSplitTenderCharge {
 			$lightrailParams['value']    = 0 - $lightrailShare;
 			$lightrailParams['metadata'] = self::getMetadata( 'STRIPE', $transactionAmount );
 			if ( $stripeShare == 0 ) { //everything on lightrail
-				$lightrailTransaction = LightrailTransaction::create( $lightrailParams );
+				$lightrailTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
 
 				return new StripeLightrailSplitTenderCharge( null, $lightrailTransaction );
 			} else { //split between card and credit card
 				$lightrailParams['pending']  = true;
-				$lightrailPendingTransaction = LightrailTransaction::create( $lightrailParams );
+				$lightrailPendingTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
 				try {
 					$stripeParams             = self::removeLightrailParams( $params );
 					$stripeParams['amount']   = $stripeShare;

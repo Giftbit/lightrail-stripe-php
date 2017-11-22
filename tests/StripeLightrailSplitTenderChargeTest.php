@@ -1,15 +1,18 @@
 <?php
 
-namespace Lightrail;
+namespace LightrailStripe;
 
-require_once '../init.php';
-
-$dotenv = new \Dotenv\Dotenv(__DIR__ . "/..");
+$dotenv = new \Dotenv\Dotenv( __DIR__ . "/.." );
 $dotenv->load();
+require_once __DIR__ . '/../init.php';
 
 use PHPUnit\Framework\TestCase;
 
 class StripeLightrailSplitTenderChargeTest extends TestCase {
+	public static function setUpBeforeClass() {
+		\Lightrail\Lightrail::$apiKey = getEnv( "LIGHTRAIL_API_KEY" );
+		\Stripe\Stripe::setApiKey( getenv( "STRIPE_API_KEY" ) );
+	}
 
 	public function getBasicParams() {
 		return array(
@@ -21,9 +24,6 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTender() {
-		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
-		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
-
 		$splitTender = StripeLightrailSplitTenderCharge::create( $this->getBasicParams(), 99, 1 );
 		$this->assertNotNull( $splitTender->lightrailTransaction );
 		$this->assertNotNull( $splitTender->stripeCharge );
@@ -32,9 +32,6 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithLowercaseCurrency() {
-		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
-		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
-
 		$params             = $this->getBasicParams();
 		$params['currency'] = 'usd';
 		$splitTender        = StripeLightrailSplitTenderCharge::create( $params, 99, 1 );
@@ -45,9 +42,6 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithUserSuppliedId() {
-		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
-		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
-
 		$params = $this->getBasicParams();
 
 		$userSuppliedId           = uniqid();
@@ -62,9 +56,6 @@ class StripeLightrailSplitTenderChargeTest extends TestCase {
 	}
 
 	public function testSplitTenderWithIdempotencyKey() {
-		Lightrail::$apiKey = getenv("LIGHTRAIL_API_KEY");
-		\Stripe\Stripe::setApiKey( getenv("STRIPE_API_KEY") );
-
 		$params = $this->getBasicParams();
 
 		$userSuppliedId            = uniqid();
