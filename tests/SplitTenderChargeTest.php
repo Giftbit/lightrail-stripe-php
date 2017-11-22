@@ -31,6 +31,20 @@ class SplitTenderChargeTest extends TestCase {
 		$this->assertEquals( 1, $splitTender->getLightrailShare() );
 	}
 
+	public function testSplitTenderLightrailOnly() {
+		$splitTender = SplitTenderCharge::create( $this->getBasicParams(), 0, 100 );
+		$this->assertNotNull( $splitTender->lightrailTransaction );
+		$this->assertNull( $splitTender->stripeCharge );
+		$this->assertEquals( 100, $splitTender->getLightrailShare() );
+	}
+
+	public function testSplitTenderStripeOnly() {
+		$splitTender = SplitTenderCharge::create( $this->getBasicParams(), 100, 0 );
+		$this->assertNull( $splitTender->lightrailTransaction );
+		$this->assertNotNull( $splitTender->stripeCharge );
+		$this->assertEquals( 100, $splitTender->getStripeShare() );
+	}
+
 	public function testSplitTenderWithLowercaseCurrency() {
 		$params             = $this->getBasicParams();
 		$params['currency'] = 'usd';
