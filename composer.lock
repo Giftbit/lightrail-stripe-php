@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5355c26b933c7d5d73997435decab4f5",
+    "content-hash": "4d44ba98b3a371122833b7aeb557be18",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,11 +54,11 @@
         },
         {
             "name": "lightrail/lightrail-client",
-            "version": "dev-copy_from_lr_stripe",
+            "version": "dev-lightrail_object_constructor",
             "dist": {
                 "type": "path",
                 "url": "../lightrail-client-php",
-                "reference": "b5d9cf07a2e89bb395c51f23f9ed0dda33f7dff1",
+                "reference": "1a2e314c8c731736b919284fd8c0e457522c5414",
                 "shasum": null
             },
             "require": {
