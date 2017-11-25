@@ -2,102 +2,146 @@
 
 namespace LightrailStripe;
 
-$dotenv = new \Dotenv\Dotenv( __DIR__ . "/.." );
+$dotenv = new \Dotenv\Dotenv(__DIR__ . "/..");
 $dotenv->load();
 require_once __DIR__ . '/../init.php';
 
 use PHPUnit\Framework\TestCase;
 
-class SplitTenderChargeTest extends TestCase {
-	public static function setUpBeforeClass() {
-		\Lightrail\Lightrail::$apiKey = getEnv( "LIGHTRAIL_API_KEY" );
-		\Stripe\Stripe::setApiKey( getenv( "STRIPE_API_KEY" ) );
-	}
+class SplitTenderChargeTest extends TestCase
+{
+    public static function setUpBeforeClass()
+    {
+        \Lightrail\Lightrail::$apiKey = getEnv("LIGHTRAIL_API_KEY");
+        \Stripe\Stripe::setApiKey(getenv("STRIPE_API_KEY"));
+    }
 
-	public function getBasicParams() {
-		return array(
-			'amount'    => 100,
-			'currency'  => 'USD',
-			'source'    => getenv( "STRIPE_DEMO_TOKEN" ),
-			'shopperId' => getenv( "SHOPPER_ID" ),
-		);
-	}
+    public function getBasicParams()
+    {
+        return array(
+            'amount' => 100,
+            'currency' => 'USD',
+            'source' => getenv("STRIPE_DEMO_TOKEN"),
+            'shopperId' => getenv("SHOPPER_ID"),
+        );
+    }
 
-	public function testSplitTender() {
-		$splitTender = SplitTenderCharge::create( $this->getBasicParams(), 1 );
-		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertNotNull( $splitTender->stripeCharge );
-		$this->assertEquals( 99, $splitTender->getStripeShare() );
-		$this->assertEquals( 1, $splitTender->getLightrailShare() );
-	}
+    public function testSimulateSplitTender()
+    {
+        $splitTender = SplitTenderCharge::simulate($this->getBasicParams(), 1);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNull($splitTender->stripeCharge);
+        $this->assertEquals(1, $splitTender->getLightrailShare());
+    }
 
-	public function testSplitTenderLightrailOnly() {
-		$splitTender = SplitTenderCharge::create( $this->getBasicParams(), 100 );
-		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertNull( $splitTender->stripeCharge );
-		$this->assertEquals( 100, $splitTender->getLightrailShare() );
-	}
+    public function testSplitTender()
+    {
+        $splitTender = SplitTenderCharge::create($this->getBasicParams(), 1);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNotNull($splitTender->stripeCharge);
+        $this->assertEquals(99, $splitTender->getStripeShare());
+        $this->assertEquals(1, $splitTender->getLightrailShare());
+    }
 
-	public function testSplitTenderStripeOnly() {
-		$splitTender = SplitTenderCharge::create( $this->getBasicParams(), 0 );
-		$this->assertNull( $splitTender->lightrailTransaction );
-		$this->assertNotNull( $splitTender->stripeCharge );
-		$this->assertEquals( 100, $splitTender->getStripeShare() );
-	}
+    public function testSimulateSplitTenderLightrailOnly()
+    {
+        $splitTender = SplitTenderCharge::simulate($this->getBasicParams(), 100);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNull($splitTender->stripeCharge);
+        $this->assertEquals(100, $splitTender->getLightrailShare());
+    }
 
-	public function testSplitTenderWithLowercaseCurrency() {
-		$params             = $this->getBasicParams();
-		$params['currency'] = 'usd';
-		$splitTender        = SplitTenderCharge::create( $params, 1 );
+    public function testSplitTenderLightrailOnly()
+    {
+        $splitTender = SplitTenderCharge::create($this->getBasicParams(), 100);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNull($splitTender->stripeCharge);
+        $this->assertEquals(100, $splitTender->getLightrailShare());
+    }
 
-		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertNotNull( $splitTender->stripeCharge );
-		$this->assertEquals( 99, $splitTender->getStripeShare() );
-		$this->assertEquals( 1, $splitTender->getLightrailShare() );
-	}
+    public function testSimulateSplitTenderStripeOnly()
+    {
+        $splitTender = SplitTenderCharge::simulate($this->getBasicParams(), 0);
+        $this->assertNull($splitTender->lightrailTransaction);
+        $this->assertNull($splitTender->stripeCharge);
+    }
 
-	public function testSplitTenderWithUserSuppliedId() {
-		$params = $this->getBasicParams();
+    public function testSplitTenderStripeOnly()
+    {
+        $splitTender = SplitTenderCharge::create($this->getBasicParams(), 0);
+        $this->assertNull($splitTender->lightrailTransaction);
+        $this->assertNotNull($splitTender->stripeCharge);
+        $this->assertEquals(100, $splitTender->getStripeShare());
+    }
 
-		$userSuppliedId           = uniqid();
-		$params['userSuppliedId'] = $userSuppliedId;
+    public function testSimulateSplitTenderAllTheMoney()
+    {
+        $params = $this->getBasicParams();
+        $params['amount'] = 99999999;
+        $params['nsf'] = false;
+        $splitTender = SplitTenderCharge::simulate($params, 1);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNull($splitTender->stripeCharge);
+        $this->assertGreaterThan(0, $splitTender->getLightrailShare());
+    }
 
-		$splitTender = SplitTenderCharge::create( $params, 1 );
-		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertEquals( $userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
-		$this->assertNotNull( $splitTender->stripeCharge );
-		$this->assertEquals( 99, $splitTender->getStripeShare() );
-		$this->assertEquals( 1, $splitTender->getLightrailShare() );
-	}
+    public function testSplitTenderWithLowercaseCurrency()
+    {
+        $params = $this->getBasicParams();
+        $params['currency'] = 'usd';
+        $splitTender = SplitTenderCharge::create($params, 1);
 
-	public function testSplitTenderWithIdempotencyKey() {
-		$params = $this->getBasicParams();
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertNotNull($splitTender->stripeCharge);
+        $this->assertEquals(99, $splitTender->getStripeShare());
+        $this->assertEquals(1, $splitTender->getLightrailShare());
+    }
 
-		$userSuppliedId            = uniqid();
-		$params['idempotency-key'] = $userSuppliedId;
+    public function testSplitTenderWithUserSuppliedId()
+    {
+        $params = $this->getBasicParams();
 
-		$splitTender = SplitTenderCharge::create( $params, 1 );
-		$this->assertNotNull( $splitTender->lightrailTransaction );
-		$this->assertEquals( $userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId );
-		$this->assertNotNull( $splitTender->stripeCharge );
-		$this->assertEquals( 99, $splitTender->getStripeShare() );
-		$this->assertEquals( 1, $splitTender->getLightrailShare() );
-	}
+        $userSuppliedId = uniqid();
+        $params['userSuppliedId'] = $userSuppliedId;
 
-	public function testSplitTenderWithMetadata() {
-		$params             = $this->getBasicParams();
-		$params['metadata'] = array( 'test' => 'test' );
+        $splitTender = SplitTenderCharge::create($params, 1);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertEquals($userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId);
+        $this->assertNotNull($splitTender->stripeCharge);
+        $this->assertEquals(99, $splitTender->getStripeShare());
+        $this->assertEquals(1, $splitTender->getLightrailShare());
+    }
 
-		$splitTender = SplitTenderCharge::create( $params, 1 );
+    public function testSplitTenderWithIdempotencyKey()
+    {
+        $params = $this->getBasicParams();
 
-		$this->assertEquals( $splitTender->lightrailTransaction->metadata['_split_tender_total'], 100 );
-		$this->assertEquals( $splitTender->stripeCharge->metadata['_split_tender_total'], 100 );
+        $userSuppliedId = uniqid();
+        $params['idempotency-key'] = $userSuppliedId;
 
-		$this->assertEquals( $splitTender->lightrailTransaction->metadata['_split_tender_partner'], 'STRIPE' );
-		$this->assertEquals( $splitTender->stripeCharge->metadata['_split_tender_partner'], 'LIGHTRAIL' );
+        $splitTender = SplitTenderCharge::create($params, 1);
+        $this->assertNotNull($splitTender->lightrailTransaction);
+        $this->assertEquals($userSuppliedId . '-CAPTURE', $splitTender->lightrailTransaction->userSuppliedId);
+        $this->assertNotNull($splitTender->stripeCharge);
+        $this->assertEquals(99, $splitTender->getStripeShare());
+        $this->assertEquals(1, $splitTender->getLightrailShare());
+    }
 
-		$this->assertEquals( $splitTender->lightrailTransaction->metadata['_split_tender_partner_transaction_id'], $splitTender->stripeCharge->id );
-		$this->assertEquals( $splitTender->stripeCharge->metadata['_split_tender_partner_transaction_id'], $splitTender->lightrailTransaction->metadata['giftbit_initial_transaction_id'] );
-	}
+    public function testSplitTenderWithMetadata()
+    {
+        $params = $this->getBasicParams();
+        $params['metadata'] = array('test' => 'test');
+
+        $splitTender = SplitTenderCharge::create($params, 1);
+
+        $this->assertEquals($splitTender->lightrailTransaction->metadata['_split_tender_total'], 100);
+        $this->assertEquals($splitTender->stripeCharge->metadata['_split_tender_total'], 100);
+
+        $this->assertEquals($splitTender->lightrailTransaction->metadata['_split_tender_partner'], 'STRIPE');
+        $this->assertEquals($splitTender->stripeCharge->metadata['_split_tender_partner'], 'LIGHTRAIL');
+
+        $this->assertEquals($splitTender->lightrailTransaction->metadata['_split_tender_partner_transaction_id'], $splitTender->stripeCharge->id);
+        $this->assertEquals($splitTender->stripeCharge->metadata['_split_tender_partner_transaction_id'], $splitTender->lightrailTransaction->metadata['giftbit_initial_transaction_id']);
+    }
 
 }

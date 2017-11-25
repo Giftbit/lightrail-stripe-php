@@ -22,8 +22,6 @@ class SplitTenderCharge
         unset($params['amount']);
 
         $params = self::addDefaultUserSuppliedIdIfNotProvided($params);
-        $userSuppliedId = $params['userSuppliedId'];
-
         $stripeShare = $transactionAmount - $lightrailShare;
 
         if ($lightrailShare != 0) {
@@ -38,7 +36,7 @@ class SplitTenderCharge
                 $lightrailPendingTransaction = \Lightrail\LightrailTransaction::create($lightrailParams);
                 try {
                     $stripeParams = self::splitTenderToStripeParams($params, $transactionAmount, $stripeShare, $lightrailPendingTransaction->transactionId);
-                    $charge = \Stripe\Charge::create($stripeParams, array('idempotency_key' => $userSuppliedId));
+                    $charge = \Stripe\Charge::create($stripeParams, array('idempotency_key' => $params['userSuppliedId']));
                 } catch (\Exception $exception) {
                     $lightrailPendingTransaction->void();
                     throw $exception;
@@ -56,6 +54,24 @@ class SplitTenderCharge
 
             return new SplitTenderCharge($charge, null);
         }
+    }
+
+    public static function simulate($params, $lightrailShare)
+    {
+        \LightrailStripe\LightrailStripe::checkSplitTenderParams($params, $lightrailShare);
+
+        $transactionAmount = $params['amount'];
+        unset($params['amount']);
+
+        $params = self::addDefaultUserSuppliedIdIfNotProvided($params);
+
+        if ($lightrailShare > 0) {
+            $lightrailParams = self::splitTenderToLightrailParams($params, $transactionAmount, $lightrailShare);
+            $lightrailTransaction = \Lightrail\LightrailTransaction::simulate($lightrailParams);
+            return new SplitTenderCharge(null, $lightrailTransaction);
+        }
+
+        return new SplitTenderCharge(null, null);
     }
 
     // Helpers
