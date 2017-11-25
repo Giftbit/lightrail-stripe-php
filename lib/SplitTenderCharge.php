@@ -1,163 +1,168 @@
 <?php
 
-
 namespace LightrailStripe;
 
+class SplitTenderCharge
+{
 
-class SplitTenderCharge {
+    public $lightrailTransaction = null;
+    public $stripeCharge = null;
 
-	public $lightrailTransaction = null;
-	public $stripeCharge = null;
+    public function __construct($stripeCharge, $lightrailTransaction)
+    {
+        $this->stripeCharge = $stripeCharge;
+        $this->lightrailTransaction = $lightrailTransaction;
+    }
 
-	public function __construct( $stripeCharge, $lightrailTransaction ) {
-		$this->stripeCharge         = $stripeCharge;
-		$this->lightrailTransaction = $lightrailTransaction;
-	}
+    public static function create($params, $lightrailShare)
+    {
+        \LightrailStripe\LightrailStripe::checkSplitTenderParams($params, $lightrailShare);
 
-	public static function create( $params, $lightrailShare ) {
-		\LightrailStripe\LightrailStripe::checkSplitTenderParams( $params, $lightrailShare );
+        $transactionAmount = $params['amount'];
+        unset($params['amount']);
 
-		$transactionAmount = $params['amount'];
-		unset( $params['amount'] );
+        $params = self::addDefaultUserSuppliedIdIfNotProvided($params);
+        $userSuppliedId = $params['userSuppliedId'];
 
-		$params         = self::addDefaultUserSuppliedIdIfNotProvided( $params );
-		$userSuppliedId = $params['userSuppliedId'];
+        $stripeShare = $transactionAmount - $lightrailShare;
 
-		$stripeShare = $transactionAmount - $lightrailShare;
+        if ($lightrailShare != 0) {
+            $lightrailParams = self::splitTenderToLightrailParams($params, $transactionAmount, $lightrailShare);
 
-		if ( $lightrailShare != 0 ) {
-			$lightrailParams = self::splitTenderToLightrailParams( $params, $transactionAmount, $lightrailShare );
+            if ($stripeShare == 0) { //everything on lightrail
+                $lightrailTransaction = \Lightrail\LightrailTransaction::create($lightrailParams);
 
-			if ( $stripeShare == 0 ) { //everything on lightrail
-				$lightrailTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
+                return new SplitTenderCharge(null, $lightrailTransaction);
+            } else { //split between card and credit card
+                $lightrailParams['pending'] = true;
+                $lightrailPendingTransaction = \Lightrail\LightrailTransaction::create($lightrailParams);
+                try {
+                    $stripeParams = self::splitTenderToStripeParams($params, $transactionAmount, $stripeShare, $lightrailPendingTransaction->transactionId);
+                    $charge = \Stripe\Charge::create($stripeParams, array('idempotency_key' => $userSuppliedId));
+                } catch (\Exception $exception) {
+                    $lightrailPendingTransaction->void();
+                    throw $exception;
+                }
 
-				return new SplitTenderCharge( null, $lightrailTransaction );
+                $metadataForLightrailCapture = self::appendMetadata($lightrailPendingTransaction->metadata, 'STRIPE', $transactionAmount, $charge->id);
+                $lightrailCaptureTransaction = $lightrailPendingTransaction->capture(array('metadata' => $metadataForLightrailCapture));
 
-			} else { //split between card and credit card
-				$lightrailParams['pending']  = true;
-				$lightrailPendingTransaction = \Lightrail\LightrailTransaction::create( $lightrailParams );
-				try {
-					$stripeParams = self::splitTenderToStripeParams( $params, $transactionAmount, $stripeShare, $lightrailPendingTransaction->transactionId );
-					$charge       = \Stripe\Charge::create( $stripeParams, array( 'idempotency_key' => $userSuppliedId ) );
+                return new SplitTenderCharge($charge, $lightrailCaptureTransaction);
+            }
+        } else { //all on credit card
+            $stripeParams = self::removeLightrailParams($params);
+            $stripeParams['amount'] = $stripeShare;
+            $charge = \Stripe\Charge::create($stripeParams);
 
-				} catch ( \Exception $exception ) {
-					$lightrailPendingTransaction->void();
-					throw $exception;
-				}
+            return new SplitTenderCharge($charge, null);
+        }
+    }
 
-				$metadataForLightrailCapture = self::appendMetadata( $lightrailPendingTransaction->metadata, 'STRIPE', $transactionAmount, $charge->id );
-				$lightrailCaptureTransaction = $lightrailPendingTransaction->capture( array( 'metadata' => $metadataForLightrailCapture ) );
+    // Helpers
 
-				return new SplitTenderCharge( $charge, $lightrailCaptureTransaction );
-			}
-		} else { //all on credit card
-			$stripeParams           = self::removeLightrailParams( $params );
-			$stripeParams['amount'] = $stripeShare;
-			$charge                 = \Stripe\Charge::create( $stripeParams );
+    public static function addDefaultUserSuppliedIdIfNotProvided($params)
+    {
+        $new_params = $params;
+        if (isset($new_params['idempotency-key'])) {
+            $new_params['userSuppliedId'] = $new_params['idempotency-key'];
+            unset($new_params['idempotency-key']);
+        }
 
-			return new SplitTenderCharge( $charge, null );
-		}
-	}
+        if (!isset($new_params['userSuppliedId'])) {
+            $new_params['userSuppliedId'] = uniqid();
+        }
 
+        return $new_params;
+    }
 
-	// Helpers
+    public static function splitTenderToLightrailParams($splitTenderParams, $transactionAmount, $lightrailShare, $stripeTransactionId = null)
+    {
+        $lightrailParams = self::removeStripeParams($splitTenderParams);
+        $lightrailParams['value'] = 0 - $lightrailShare;
+        $lightrailParams['metadata'] = isset($lightrailParams['metadata']) ? $lightrailParams['metadata'] : [];
+        $lightrailParams['metadata'] = self::appendMetadata($lightrailParams['metadata'], 'STRIPE', $transactionAmount, $stripeTransactionId);
 
-	public static function splitTenderToLightrailParams( $splitTenderParams, $transactionAmount, $lightrailShare, $stripeTransactionId = null ) {
-		$lightrailParams = self::removeStripeParams( $splitTenderParams );
-		$lightrailParams['value'] = 0 - $lightrailShare;
-		$lightrailParams['metadata'] = isset( $lightrailParams['metadata'] ) ? $lightrailParams['metadata'] : [];
-		$lightrailParams['metadata'] = self::appendMetadata( $lightrailParams['metadata'], 'STRIPE', $transactionAmount, $stripeTransactionId );
+        return $lightrailParams;
+    }
 
-		return $lightrailParams;
-	}
+    private static function removeStripeParams($params)
+    {
+        $newParams = $params;
+        unset($newParams['source']);
+        unset($newParams['customer']);
 
-	public static function splitTenderToStripeParams( $splitTenderParams, $transactionAmount, $stripeShare, $lightrailTransactionId = null ) {
-		$stripeParams = self::removeLightrailParams( $splitTenderParams );
-		$stripeParams['amount'] = $stripeShare;
-		$stripeMetadata           = isset( $stripeParams['metadata'] ) ? $stripeParams['metadata'] : [];
-		$stripeParams['metadata'] = self::appendMetadata( $stripeMetadata, 'LIGHTRAIL', $transactionAmount, $lightrailTransactionId );
+        return $newParams;
+    }
 
-		return $stripeParams;
-	}
+    public static function appendMetadata($originalMetadata, $partner, $transactionAmount, $partnerTransactionId = null)
+    {
+        $newMetadata = $originalMetadata;
 
-	public static function addDefaultUserSuppliedIdIfNotProvided( $params ) {
-		$new_params = $params;
-		if ( isset( $new_params['idempotency-key'] ) ) {
-			$new_params['userSuppliedId'] = $new_params['idempotency-key'];
-			unset( $new_params['idempotency-key'] );
-		}
+        $newMetadata['_split_tender_total'] = $transactionAmount;
+        $newMetadata['_split_tender_partner'] = $partner;
+        if ($partnerTransactionId != null) {
+            $newMetadata['_split_tender_partner_transaction_id'] = $partnerTransactionId;
+        }
 
-		if ( ! isset( $new_params['userSuppliedId'] ) ) {
-			$new_params['userSuppliedId'] = uniqid();
-		}
+        return $newMetadata;
+    }
 
-		return $new_params;
-	}
+    public static function splitTenderToStripeParams($splitTenderParams, $transactionAmount, $stripeShare, $lightrailTransactionId = null)
+    {
+        $stripeParams = self::removeLightrailParams($splitTenderParams);
+        $stripeParams['amount'] = $stripeShare;
+        $stripeMetadata = isset($stripeParams['metadata']) ? $stripeParams['metadata'] : [];
+        $stripeParams['metadata'] = self::appendMetadata($stripeMetadata, 'LIGHTRAIL', $transactionAmount, $lightrailTransactionId);
 
-	public static function appendMetadata( $originalMetadata, $partner, $transactionAmount, $partnerTransactionId = null ) {
-		$newMetadata = $originalMetadata;
+        return $stripeParams;
+    }
 
-		$newMetadata['_split_tender_total']   = $transactionAmount;
-		$newMetadata['_split_tender_partner'] = $partner;
-		if ( $partnerTransactionId != null ) {
-			$newMetadata['_split_tender_partner_transaction_id'] = $partnerTransactionId;
-		}
+    private static function removeLightrailParams($params)
+    {
+        $newParams = $params;
+        unset($newParams['cardId']);
+        unset($newParams['contact']);
+        unset($newParams['shopperId']);
+        unset($newParams['userSuppliedId']);
 
-		return $newMetadata;
-	}
+        return $newParams;
+    }
 
-	private static function removeStripeParams( $params ) {
-		$newParams = $params;
-		unset( $newParams['source'] );
-		unset( $newParams['customer'] );
+    // Instance methods
 
-		return $newParams;
-	}
+    public function getStripeShare()
+    {
+        if (!isset($this->stripeCharge)) {
+            return null;
+        }
 
-	private static function removeLightrailParams( $params ) {
-		$newParams = $params;
-		unset( $newParams['cardId'] );
-		unset( $newParams['contact'] );
-		unset( $newParams['shopperId'] );
-		unset( $newParams['userSuppliedId'] );
+        return $this->stripeCharge->amount;
+    }
 
-		return $newParams;
-	}
+    public function getLightrailShare()
+    {
+        if (!isset($this->lightrailTransaction)) {
+            return null;
+        }
 
+        return 0 - $this->lightrailTransaction->value;
+    }
 
-	// Instance methods
+    public function getStripeTxId()
+    {
+        if (!isset($this->stripeCharge)) {
+            return null;
+        }
 
-	public function getStripeShare() {
-		if ( ! isset( $this->stripeCharge ) ) {
-			return null;
-		}
+        return $this->stripeCharge->id;
+    }
 
-		return $this->stripeCharge->amount;
-	}
+    public function getLightrailTxId()
+    {
+        if (!isset($this->lightrailTransaction)) {
+            return null;
+        }
 
-	public function getLightrailShare() {
-		if ( ! isset( $this->lightrailTransaction ) ) {
-			return null;
-		}
-
-		return 0 - $this->lightrailTransaction->value;
-	}
-
-	public function getStripeTxId() {
-		if ( ! isset( $this->stripeCharge ) ) {
-			return null;
-		}
-
-		return $this->stripeCharge->id;
-	}
-
-	public function getLightrailTxId() {
-		if ( ! isset( $this->lightrailTransaction ) ) {
-			return null;
-		}
-
-		return 0 - $this->lightrailTransaction->transactionId;
-	}
-
-
+        return 0 - $this->lightrailTransaction->transactionId;
+    }
 }

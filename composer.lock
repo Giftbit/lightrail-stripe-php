@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d44ba98b3a371122833b7aeb557be18",
+    "content-hash": "25e7fda946f6361d6715c5dec452c341",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -53,13 +53,18 @@
             "time": "2017-06-27T22:17:23+00:00"
         },
         {
-            "name": "lightrail/lightrail-client",
-            "version": "dev-lightrail_object_constructor",
+            "name": "lightrail/lightrail",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Giftbit/lightrail-client-php.git",
+                "reference": "5950601576b5396243f85644ef8afd4faa0ab7ad"
+            },
             "dist": {
-                "type": "path",
-                "url": "../lightrail-client-php",
-                "reference": "1a2e314c8c731736b919284fd8c0e457522c5414",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/Giftbit/lightrail-client-php/zipball/5950601576b5396243f85644ef8afd4faa0ab7ad",
+                "reference": "5950601576b5396243f85644ef8afd4faa0ab7ad",
+                "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^5.0",
@@ -67,6 +72,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "5.7.x-dev",
+                "squizlabs/php_codesniffer": "^3.0@dev",
                 "vlucas/phpdotenv": "^2.5@dev"
             },
             "type": "library",
@@ -75,11 +81,7 @@
                     "Lightrail\\": "lib/"
                 }
             },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -89,7 +91,14 @@
                     "email": "tana.j@lightrail.com"
                 }
             ],
-            "description": "Client library for the Lightrail API (www.lightrail.com)"
+            "description": "Client library for the Lightrail API (www.lightrail.com)",
+            "keywords": [
+                "account credits",
+                "gift card",
+                "lightrail",
+                "payment processing"
+            ],
+            "time": "2017-11-25T02:16:46+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -399,12 +408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace"
+                "reference": "e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace",
-                "reference": "ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf",
+                "reference": "e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +463,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-11-07T12:00:44+00:00"
+            "time": "2017-11-24T13:59:53+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -525,12 +534,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "63304292f3cf89b2382b90dd7a2abf9e0ba232f9"
+                "reference": "8ebba84e5bd74fc5fdeb916b38749016c7232f93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/63304292f3cf89b2382b90dd7a2abf9e0ba232f9",
-                "reference": "63304292f3cf89b2382b90dd7a2abf9e0ba232f9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/8ebba84e5bd74fc5fdeb916b38749016c7232f93",
+                "reference": "8ebba84e5bd74fc5fdeb916b38749016c7232f93",
                 "shasum": ""
             },
             "require": {
@@ -564,7 +573,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2017-10-30T04:21:02+00:00"
+            "time": "2017-11-24T15:00:59+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -1360,6 +1369,57 @@
             "time": "2016-10-03T07:35:21+00:00"
         },
         {
+            "name": "squizlabs/php_codesniffer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "935c8b5875fadd80bb2c7c2fcf800bd0192aa3d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/935c8b5875fadd80bb2c7c2fcf800bd0192aa3d2",
+                "reference": "935c8b5875fadd80bb2c7c2fcf800bd0192aa3d2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
+            },
+            "bin": [
+                "bin/phpcs",
+                "bin/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-11-23T22:17:20+00:00"
+        },
+        {
             "name": "symfony/yaml",
             "version": "3.4.x-dev",
             "source": {
@@ -1423,12 +1483,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "fa9d523a4979028c3d8536fcdcf84f00940edc74"
+                "reference": "ec37c495d56b68f103acafa95fec5ed39b14d7db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/fa9d523a4979028c3d8536fcdcf84f00940edc74",
-                "reference": "fa9d523a4979028c3d8536fcdcf84f00940edc74",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/ec37c495d56b68f103acafa95fec5ed39b14d7db",
+                "reference": "ec37c495d56b68f103acafa95fec5ed39b14d7db",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1525,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2017-11-18T18:27:11+00:00"
+            "time": "2017-11-24T14:28:50+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -1521,9 +1581,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "lightrail/lightrail-client": 20,
         "phpunit/phpunit": 20,
-        "vlucas/phpdotenv": 20
+        "vlucas/phpdotenv": 20,
+        "squizlabs/php_codesniffer": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
