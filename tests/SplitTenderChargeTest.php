@@ -144,4 +144,37 @@ class SplitTenderChargeTest extends TestCase
         $this->assertEquals($splitTender->stripeCharge->metadata['_split_tender_partner_transaction_id'], $splitTender->lightrailTransaction->metadata['giftbit_initial_transaction_id']);
     }
 
+    public function testRethrowStripeErrorAfterLightrailPending()
+    {
+        \Stripe\Stripe::setApiKey('abc');
+
+        $params = $this->getBasicParams();
+        $this->expectException(\Exception::class);
+        SplitTenderCharge::create($params, 1);
+
+        \Stripe\Stripe::setApiKey(getenv("STRIPE_API_KEY"));
+    }
+
+    public function testRethrowStripeErrorWithoutLightrailPending()
+    {
+        \Stripe\Stripe::setApiKey('abc');
+
+        $params = $this->getBasicParams();
+        $this->expectException(\Exception::class);
+        SplitTenderCharge::create($params, 0);
+
+        \Stripe\Stripe::setApiKey(getenv("STRIPE_API_KEY"));
+    }
+
+    public function testRethrowLightrailPendingError()
+    {
+        \Lightrail\Lightrail::$apiKey = 'abc';
+
+        $params = $this->getBasicParams();
+        $this->expectException(\Exception::class);
+        SplitTenderCharge::create($params, 1);
+
+        \Lightrail\Lightrail::$apiKey = getEnv("LIGHTRAIL_API_KEY");
+    }
+
 }
