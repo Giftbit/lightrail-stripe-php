@@ -177,4 +177,11 @@ class SplitTenderChargeTest extends TestCase
         \Lightrail\Lightrail::$apiKey = getEnv("LIGHTRAIL_API_KEY");
     }
 
+    public function testThrowErrorIfLightrailAmountHigherThanTotal()
+    {
+        $params = $this->getBasicParams();
+        $this->expectException(\Lightrail\Exceptions\BadParameterException::class);
+        SplitTenderCharge::create($params, 101);
+    }
+
 }
