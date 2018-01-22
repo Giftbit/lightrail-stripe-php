@@ -25,6 +25,10 @@ class SplitTenderCharge
         $stripeShare = $transactionAmount - $lightrailShare;
 
         if ($lightrailShare != 0) {
+            if ($lightrailShare > $transactionAmount) {
+                throw new \Lightrail\Exceptions\BadParameterException('Lightrail share greater than total transaction amount..');
+            }
+
             $lightrailParams = self::splitTenderToLightrailParams($params, $transactionAmount, $lightrailShare);
 
             if ($stripeShare == 0) { //everything on lightrail
