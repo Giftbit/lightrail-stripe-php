@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "210f60c523895343278d268b67d05a05",
+    "content-hash": "12cf137b0f879d2b48e3c9381ac4dfa0",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,16 +54,16 @@
         },
         {
             "name": "lightrail/lightrail",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Giftbit/lightrail-client-php.git",
-                "reference": "438af67af2feae06131510692b6c45577017d32a"
+                "reference": "22046ae928f59f6e4f0fbd987ea97113d2759d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Giftbit/lightrail-client-php/zipball/438af67af2feae06131510692b6c45577017d32a",
-                "reference": "438af67af2feae06131510692b6c45577017d32a",
+                "url": "https://api.github.com/repos/Giftbit/lightrail-client-php/zipball/22046ae928f59f6e4f0fbd987ea97113d2759d71",
+                "reference": "22046ae928f59f6e4f0fbd987ea97113d2759d71",
                 "shasum": ""
             },
             "require": {
@@ -98,7 +98,7 @@
                 "lightrail",
                 "payment processing"
             ],
-            "time": "2018-02-16T17:17:40+00:00"
+            "time": "2018-03-12T18:36:27+00:00"
         },
         {
             "name": "stripe/stripe-php",
