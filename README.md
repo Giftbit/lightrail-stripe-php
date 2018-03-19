@@ -49,3 +49,23 @@ The following dependency is also necessary if you want to run the unit tests.
 Copy `~test-config.php` to `test-config.php` and fill in the blank fields. 
 
 Tests can be run from `tests/` with `../vendor/bin/phpunit ./`
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at <https://github.com/Giftbit/lightrail-stripe-php>.
+
+
+## Publishing
+
+After pushing changes to Github, tag a new release. You can do this via the web interface or through the command line:
+
+```
+git tag -a vX.X.X -m "Tag message or title"
+git push origin vX.X.X
+```
+
+Then log into packagist.org and click "Update" on the `lightrail/lightrail` package (you must be logged in as the Lightrail user).
+
+## License
+
+This library is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
