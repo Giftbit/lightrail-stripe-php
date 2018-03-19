@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c5db3e0d7d5e62a80e05d385fd124f4",
+    "content-hash": "210f60c523895343278d268b67d05a05",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,16 +54,16 @@
         },
         {
             "name": "lightrail/lightrail",
-            "version": "v0.2.0",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Giftbit/lightrail-client-php.git",
-                "reference": "e9aa4e3daf7c5e5ea958f25186401f226293b701"
+                "reference": "438af67af2feae06131510692b6c45577017d32a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Giftbit/lightrail-client-php/zipball/e9aa4e3daf7c5e5ea958f25186401f226293b701",
-                "reference": "e9aa4e3daf7c5e5ea958f25186401f226293b701",
+                "url": "https://api.github.com/repos/Giftbit/lightrail-client-php/zipball/438af67af2feae06131510692b6c45577017d32a",
+                "reference": "438af67af2feae06131510692b6c45577017d32a",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
             "authors": [
                 {
                     "name": "Lightrail Integration Team",
-                    "email": "tana.j@lightrail.com"
+                    "email": "integrations@lightrail.com"
                 }
             ],
             "description": "Client library for the Lightrail API (www.lightrail.com)",
@@ -98,7 +98,7 @@
                 "lightrail",
                 "payment processing"
             ],
-            "time": "2017-11-25T04:31:53+00:00"
+            "time": "2018-02-16T17:17:40+00:00"
         },
         {
             "name": "stripe/stripe-php",
