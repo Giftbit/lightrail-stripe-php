@@ -15,18 +15,17 @@ For a sample project using this library, check out the [Lightrail Stripe Sample 
 
 ### Composer
 You can add this library as a dependency to your project using `composer`:
-```json
-"require": {
-    "lightrail/lightrail-stripe": "dev-master"
-  }
 ```
+composer require lightrail/lightrail-stripe
+```
+
 Alternatively, you can copy all the files and add `init.php` to your project:
 ```php
 require_once 'lightrail-stripe/init.php';
 
 ```
 ## Requirements ## 
-This library requires `PHP 5.5` or later.
+This library requires `PHP 5.6` or later.
 
 ## Dependencies ##
 
