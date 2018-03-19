@@ -15,18 +15,17 @@ For a sample project using this library, check out the [Lightrail Stripe Sample 
 
 ### Composer
 You can add this library as a dependency to your project using `composer`:
-```json
-"require": {
-    "lightrail/lightrail-stripe": "dev-master"
-  }
 ```
+composer require lightrail/lightrail-stripe
+```
+
 Alternatively, you can copy all the files and add `init.php` to your project:
 ```php
 require_once 'lightrail-stripe/init.php';
 
 ```
 ## Requirements ## 
-This library requires `PHP 5.5` or later.
+This library requires `PHP 5.6` or later.
 
 ## Dependencies ##
 
@@ -50,3 +49,23 @@ The following dependency is also necessary if you want to run the unit tests.
 Copy `~test-config.php` to `test-config.php` and fill in the blank fields. 
 
 Tests can be run from `tests/` with `../vendor/bin/phpunit ./`
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at <https://github.com/Giftbit/lightrail-stripe-php>.
+
+
+## Publishing
+
+After pushing changes to Github, tag a new release. You can do this via the web interface or through the command line:
+
+```
+git tag -a vX.X.X -m "Tag message or title"
+git push origin vX.X.X
+```
+
+Then log into packagist.org and click "Update" on the `lightrail/lightrail` package (you must be logged in as the Lightrail user).
+
+## License
+
+This library is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
